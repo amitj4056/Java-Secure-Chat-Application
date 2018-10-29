@@ -8,13 +8,15 @@ import java.security.*;
 
 public class Client {
     
-    private static ObjectOutputStream oos;
-    private static ObjectInputStream ois;
+    private static ObjectOutputStream oos,fileoos;
+    private static ObjectInputStream ois,fileois;
     private static Key AESKey,DESKey;
     private static PublicKey publicKeyServer;
     private static PrivateKey clientPrivateKey;
 
     public static void main(String[] args) throws Exception {
+        Socket fileSendSocket = new Socket("localhost",5555);
+        
         Socket writeSocket = new Socket("localhost",3110);
 
         ServerSocket ss1= new ServerSocket(3111);
@@ -22,6 +24,8 @@ public class Client {
         System.out.println("rs "+readSocket);
         oos = new ObjectOutputStream(writeSocket.getOutputStream());
         ois = new ObjectInputStream(readSocket.getInputStream());
+//        fileoos = new ObjectOutputStream(fileSendSocket.getOutputStream());
+//        fileois = new ObjectInputStream(fileSendSocket.getInputStream());
         
         System.out.println("\nStart generating RSA key");
          KeyPairGenerator keyGenRSA = KeyPairGenerator.getInstance("RSA");
@@ -53,7 +57,7 @@ public class Client {
                 e.printStackTrace();
             }
         
-        new Launcher(readSocket,writeSocket,AESKey,DESKey,ois,oos).setVisible(true);
+        new Launcher(readSocket,writeSocket,AESKey,DESKey,ois,oos,fileSendSocket).setVisible(true);
             System.out.println("Hello");
     }
 }
