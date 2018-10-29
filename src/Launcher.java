@@ -24,10 +24,10 @@ public class Launcher extends javax.swing.JFrame {
 
     private final Socket readSocket;
      static long takenTimeE,takenTimeD;
-    private static int flag=0;
+    private static int flag;
     private final Socket writeSocket;
-    private ObjectOutputStream oos;
-    private ObjectInputStream ois;
+    private ObjectOutputStream oos,fileoos;
+    private ObjectInputStream ois,fileois;
     private PublicKey publicKeyServer;
     private PrivateKey keyRSAPrivate;
     private static Socket socket;
@@ -36,8 +36,8 @@ public class Launcher extends javax.swing.JFrame {
     private Key AESKey,DESKey;
     static int val=1;
      File file;
-     String fileName1="C:\\Users\\hp\\Desktop\\plain";
-    public Launcher(Socket readSocket,Socket writeSocket,final Key AESKey,final Key DESKey,final ObjectInputStream  ois,ObjectOutputStream oos) throws Exception {
+     String fileName1="C:\\Users\\hp\\Desktop\\plain.txt";
+    public Launcher(Socket readSocket,Socket writeSocket,final Key AESKey,final Key DESKey,final ObjectInputStream  ois,ObjectOutputStream oos,Socket fileSendSocket) throws Exception {
         
         initComponents();
         
@@ -45,9 +45,47 @@ public class Launcher extends javax.swing.JFrame {
         this.writeSocket = writeSocket;
         this.AESKey = AESKey;
         this.DESKey = DESKey;
+         fileoos = new ObjectOutputStream(fileSendSocket.getOutputStream());
+        fileois = new ObjectInputStream(fileSendSocket.getInputStream());
         
         this.oos=oos;
         this.ois=ois;
+        new Thread()
+        {
+            public void run()
+            {
+                while(true)
+                {
+                    try{
+                    Message encryptedMessage= (Message) fileois.readObject();
+                        String type = encryptedMessage.getType();
+                        MessageDecryption mess=null;
+                        if(type.equals("AES")){
+                            {
+                                mess = new MessageDecryption(encryptedMessage.getMessage(),AESKey,type);
+                                consoleTextArea.append("Decryption Time(AES): "+takenTimeD+"\n");
+                            }
+                        }else{
+                            mess = new MessageDecryption(encryptedMessage.getMessage(),DESKey,type);
+                            consoleTextArea.append("Decryption Time(DES): "+takenTimeD+"\n");
+                        }
+                        String plainMessageString = mess.getMessage();
+                       
+                            consoleTextArea.setText("File send\n");
+                            BufferedWriter writer = new BufferedWriter(new FileWriter(fileName1, true));
+                            //writer.append(' ');
+                            writer.append(plainMessageString+"\n");
+                            writer.close();
+                            //flag=0;
+                        
+                    }
+                    catch(Exception e)
+                    {
+                        System.out.println(e);
+                    }
+                }
+            }
+        }.start();
         new Thread(){
             public void run(){
                 try {
@@ -65,14 +103,15 @@ public class Launcher extends javax.swing.JFrame {
                             consoleTextArea.append("Decryption Time(DES): "+takenTimeD+"\n");
                         }
                         String plainMessageString = mess.getMessage();
-                        if(flag==1)
-                        {
-                            BufferedWriter writer = new BufferedWriter(new FileWriter(fileName1, true));
-                            //writer.append(' ');
-                            writer.append(plainMessageString+"\n");
-                            writer.close();
-                            flag=0;
-                        }
+//                        if(Launcher.flag==1)
+//                        {   
+//                            consoleTextArea.setText("send");
+//                            BufferedWriter writer = new BufferedWriter(new FileWriter(fileName1, true));
+//                            //writer.append(' ');
+//                            writer.append(plainMessageString+"\n");
+//                            writer.close();
+//                            //flag=0;
+//                        }
                         System.out.println(plainMessageString + " FROM using "+encryptedMessage.getType());
                         chatBoxTextArea.append(plainMessageString+"\n");
                     }
@@ -85,22 +124,22 @@ public class Launcher extends javax.swing.JFrame {
         
 
     }
-    public void AesMessage() throws FileNotFoundException, IOException
-    {
-         JFileChooser chooser = new JFileChooser();
-        chooser.showOpenDialog(null);
-        file = chooser.getSelectedFile();
-        String fileName = file.getAbsolutePath();
-        System.out.println(fileName);
-        String msg;
-        BufferedReader br=new BufferedReader(new InputStreamReader(new FileInputStream(fileName)));
-        
-        while((msg=br.readLine())!=null)
-        {
-            
-        }
-        
-    }
+//    public void AesMessage() throws FileNotFoundException, IOException
+//    {
+//         JFileChooser chooser = new JFileChooser();
+//        chooser.showOpenDialog(null);
+//        file = chooser.getSelectedFile();
+//        String fileName = file.getAbsolutePath();
+//        System.out.println(fileName);
+//        String msg;
+//        BufferedReader br=new BufferedReader(new InputStreamReader(new FileInputStream(fileName)));
+//        
+//        while((msg=br.readLine())!=null)
+//        {
+//            
+//        }
+//        
+//    }
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
@@ -341,8 +380,8 @@ public class Launcher extends javax.swing.JFrame {
                     String encryptedMsgStr = messEncryption.getMessageString();
                     Message encryptedMsg = new Message(encryptedMsgStr,"DES"); 
                     chatBoxTextArea.append(msgStr+" \n");
-                    oos.writeObject(encryptedMsg);
-                    flag=1;
+                    fileoos.writeObject(encryptedMsg);
+                    //Launcher.flag=1;
                
                 }
             } catch (Exception ex) {
@@ -355,7 +394,7 @@ public class Launcher extends javax.swing.JFrame {
         } else if (file == null) {
             System.out.println("No File is chosen");
         }
-            
+       Launcher.flag=0;     
     }//GEN-LAST:event_sendFileDESBtnActionPerformed
 
     private void msgTextFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_msgTextFieldActionPerformed
@@ -436,8 +475,8 @@ public class Launcher extends javax.swing.JFrame {
                     String encryptedMsgStr = messEncryption.getMessageString();
                     Message encryptedMsg = new Message(encryptedMsgStr,"AES"); 
                     chatBoxTextArea.append(msgStr+" \n");
-                    flag=1;
-                    oos.writeObject(encryptedMsg);
+                    //Launcher.flag=1;
+                    fileoos.writeObject(encryptedMsg);
                     
                   // oos.writeInt(1);
                    // System.out.println("int sent");
@@ -466,7 +505,7 @@ public class Launcher extends javax.swing.JFrame {
         } else if (file == null) {
             System.out.println("No File is chosen");
         }
-            
+        Launcher.flag=0;     
     }//GEN-LAST:event_sendFileAESBtnActionPerformed
 
 

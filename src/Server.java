@@ -12,8 +12,8 @@ public class Server {
     private static Socket readSocket,writeSocket;
     private static PrivateKey serverPrivateKey;
     private static PublicKey serverPublicKey,clientPublicKey;
-    private static ObjectInputStream ois;
-    private static ObjectOutputStream oos;
+    private static ObjectInputStream ois,fileois;
+    private static ObjectOutputStream oos,fileoos;
     private static Key AESKey,DESKey;
     
     static void generateRSAKeyPair() throws NoSuchAlgorithmException{
@@ -58,7 +58,9 @@ public class Server {
             System.out.println("Common key (DES) has been sent to client");
     }
     public static void main(String[] args) throws Exception{
+        ServerSocket fileSendServerSocket  = new ServerSocket(5555);
         
+       Socket fileSendSocket = fileSendServerSocket.accept();
         ServerSocket ss1= new ServerSocket(3110);
         readSocket = ss1.accept();
         
@@ -66,7 +68,8 @@ public class Server {
         
         ois = new ObjectInputStream(readSocket.getInputStream());
         oos = new ObjectOutputStream(writeSocket.getOutputStream());
-
+//        fileoos = new ObjectOutputStream(fileSendSocket.getOutputStream());
+//       fileois = new ObjectInputStream(fileSendSocket.getInputStream());
        generateRSAKeyPair();
 
         try {
@@ -82,6 +85,6 @@ public class Server {
         System.out.println("Public key (RSA) of server has been sent to client");
         generateAndShareAESKey();
         generateAndShareDESKey();
-        new Launcher(readSocket,writeSocket,AESKey,DESKey,ois,oos).setVisible(true);
+        new Launcher(readSocket,writeSocket,AESKey,DESKey,ois,oos,fileSendSocket).setVisible(true);
     }
 }
