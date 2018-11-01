@@ -12,6 +12,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import static java.lang.Thread.sleep;
 import java.net.Socket;
 import java.security.Key;
 import java.security.*;
@@ -23,7 +24,7 @@ import javax.swing.JFileChooser;
 public class Launcher extends javax.swing.JFrame {
 
     private final Socket readSocket;
-     static long takenTimeE,takenTimeD;
+     static long takenTimeE,takenTimeD,timeTakenFile=0;
     private static int flag;
     private final Socket writeSocket;
     private ObjectOutputStream oos,fileoos;
@@ -54,6 +55,7 @@ public class Launcher extends javax.swing.JFrame {
         {
             public void run()
             {
+                long timeFile=0;
                 while(true)
                 {
                     try{
@@ -63,15 +65,16 @@ public class Launcher extends javax.swing.JFrame {
                         if(type.equals("AES")){
                             {
                                 mess = new MessageDecryption(encryptedMessage.getMessage(),AESKey,type);
-                                consoleTextArea.append("Decryption Time(AES): "+takenTimeD+"\n");
+                              //  consoleTextArea.append("Decryption Time(AES): "+takenTimeD+"\n");
                             }
                         }else{
                             mess = new MessageDecryption(encryptedMessage.getMessage(),DESKey,type);
-                            consoleTextArea.append("Decryption Time(DES): "+takenTimeD+"\n");
+                           // consoleTextArea.append("Decryption Time(DES): "+takenTimeD+"\n");
                         }
                         String plainMessageString = mess.getMessage();
+                        chatBoxTextArea.append(" "+plainMessageString+"\n");
                        
-                            consoleTextArea.setText("File send\n");
+                            consoleTextArea.setText("File Recieved\n");
                             BufferedWriter writer = new BufferedWriter(new FileWriter(fileName1, true));
                             //writer.append(' ');
                             writer.append(plainMessageString+"\n");
@@ -103,18 +106,10 @@ public class Launcher extends javax.swing.JFrame {
                             consoleTextArea.append("Decryption Time(DES): "+takenTimeD+"\n");
                         }
                         String plainMessageString = mess.getMessage();
-//                        if(Launcher.flag==1)
-//                        {   
-//                            consoleTextArea.setText("send");
-//                            BufferedWriter writer = new BufferedWriter(new FileWriter(fileName1, true));
-//                            //writer.append(' ');
-//                            writer.append(plainMessageString+"\n");
-//                            writer.close();
-//                            //flag=0;
-//                        }
                         System.out.println(plainMessageString + " FROM using "+encryptedMessage.getType());
-                        chatBoxTextArea.append(plainMessageString+"\n");
+                        chatBoxTextArea.append("    ->"+plainMessageString+"\n");
                     }
+                    
                 } catch (Exception ex) {
                     Logger.getLogger(Launcher.class.getName()).log(Level.SEVERE, null, ex);
                 }
@@ -161,20 +156,21 @@ public class Launcher extends javax.swing.JFrame {
         consoleTextArea = new javax.swing.JTextArea();
         jLabel2 = new javax.swing.JLabel();
         jLabel4 = new javax.swing.JLabel();
+        jButton1 = new javax.swing.JButton();
         jPanel2 = new javax.swing.JPanel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
-        jPanel1.setBackground(new java.awt.Color(32, 100, 142));
+        jPanel1.setBackground(new java.awt.Color(0, 13, 64));
 
-        headerLabel.setBackground(new java.awt.Color(27, 157, 191));
+        headerLabel.setBackground(new java.awt.Color(40, 116, 240));
         headerLabel.setFont(new java.awt.Font("Arial", 1, 36)); // NOI18N
         headerLabel.setForeground(new java.awt.Color(255, 255, 255));
         headerLabel.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         headerLabel.setText("Crypto Project");
         headerLabel.setOpaque(true);
 
-        jPanel4.setBackground(new java.awt.Color(60, 134, 169));
+        jPanel4.setBackground(new java.awt.Color(40, 116, 240));
 
         msgTextField.setFont(new java.awt.Font("Tahoma", 3, 18)); // NOI18N
         msgTextField.setForeground(new java.awt.Color(24, 118, 183));
@@ -184,7 +180,9 @@ public class Launcher extends javax.swing.JFrame {
             }
         });
 
+        sendDESBtn.setBackground(new java.awt.Color(40, 116, 240));
         sendDESBtn.setFont(new java.awt.Font("Tahoma", 1, 13)); // NOI18N
+        sendDESBtn.setForeground(new java.awt.Color(255, 255, 0));
         sendDESBtn.setText("Send (DES)");
         sendDESBtn.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -192,7 +190,9 @@ public class Launcher extends javax.swing.JFrame {
             }
         });
 
+        sendAESBtn.setBackground(new java.awt.Color(40, 116, 240));
         sendAESBtn.setFont(new java.awt.Font("Tahoma", 1, 13)); // NOI18N
+        sendAESBtn.setForeground(new java.awt.Color(255, 255, 0));
         sendAESBtn.setText("Send (AES)");
         sendAESBtn.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -200,7 +200,9 @@ public class Launcher extends javax.swing.JFrame {
             }
         });
 
+        graphButton.setBackground(new java.awt.Color(40, 116, 240));
         graphButton.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
+        graphButton.setForeground(new java.awt.Color(255, 255, 0));
         graphButton.setText("Graph");
         graphButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -208,7 +210,9 @@ public class Launcher extends javax.swing.JFrame {
             }
         });
 
+        sendFileDESBtn.setBackground(new java.awt.Color(40, 116, 240));
         sendFileDESBtn.setFont(new java.awt.Font("Tahoma", 1, 13)); // NOI18N
+        sendFileDESBtn.setForeground(new java.awt.Color(255, 255, 0));
         sendFileDESBtn.setText("Send File (DES)");
         sendFileDESBtn.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -216,7 +220,9 @@ public class Launcher extends javax.swing.JFrame {
             }
         });
 
+        sendFileAESBtn.setBackground(new java.awt.Color(40, 116, 240));
         sendFileAESBtn.setFont(new java.awt.Font("Tahoma", 1, 13)); // NOI18N
+        sendFileAESBtn.setForeground(new java.awt.Color(255, 255, 0));
         sendFileAESBtn.setText("Send File (AES)");
         sendFileAESBtn.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -225,6 +231,7 @@ public class Launcher extends javax.swing.JFrame {
         });
 
         jLabel1.setFont(new java.awt.Font("Tahoma", 3, 18)); // NOI18N
+        jLabel1.setForeground(new java.awt.Color(255, 255, 0));
         jLabel1.setText("Enter Message");
 
         javax.swing.GroupLayout jPanel4Layout = new javax.swing.GroupLayout(jPanel4);
@@ -232,12 +239,12 @@ public class Launcher extends javax.swing.JFrame {
         jPanel4Layout.setHorizontalGroup(
             jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel4Layout.createSequentialGroup()
-                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addGroup(jPanel4Layout.createSequentialGroup()
-                        .addComponent(sendDESBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 104, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(sendDESBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 115, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(sendAESBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 126, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(18, 18, 18)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(graphButton, javax.swing.GroupLayout.PREFERRED_SIZE, 103, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(sendFileDESBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 132, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -246,7 +253,7 @@ public class Launcher extends javax.swing.JFrame {
                     .addGroup(jPanel4Layout.createSequentialGroup()
                         .addContainerGap()
                         .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 187, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(msgTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 657, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(msgTextField))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jPanel4Layout.setVerticalGroup(
@@ -255,22 +262,28 @@ public class Launcher extends javax.swing.JFrame {
                 .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 45, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(msgTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 84, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(sendDESBtn)
-                    .addComponent(sendAESBtn)
-                    .addComponent(graphButton)
-                    .addComponent(sendFileDESBtn)
-                    .addComponent(sendFileAESBtn)))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(sendFileDESBtn, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(sendFileAESBtn, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addGroup(jPanel4Layout.createSequentialGroup()
+                        .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(sendDESBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(sendAESBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(0, 0, Short.MAX_VALUE))
+                    .addComponent(graphButton, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap())
         );
 
-        jPanel3.setBackground(new java.awt.Color(42, 141, 158));
+        jPanel3.setBackground(new java.awt.Color(13, 19, 121));
 
+        chatBoxTextArea.setEditable(false);
         chatBoxTextArea.setColumns(20);
         chatBoxTextArea.setFont(new java.awt.Font("Monospaced", 3, 18)); // NOI18N
         chatBoxTextArea.setRows(5);
         jScrollPane1.setViewportView(chatBoxTextArea);
 
+        consoleTextArea.setEditable(false);
         consoleTextArea.setColumns(20);
         consoleTextArea.setFont(new java.awt.Font("Monospaced", 2, 16)); // NOI18N
         consoleTextArea.setRows(5);
@@ -278,40 +291,55 @@ public class Launcher extends javax.swing.JFrame {
 
         jLabel2.setBackground(new java.awt.Color(78, 141, 167));
         jLabel2.setFont(new java.awt.Font("Tahoma", 3, 18)); // NOI18N
+        jLabel2.setForeground(new java.awt.Color(255, 255, 0));
         jLabel2.setText("Console");
 
         jLabel4.setBackground(new java.awt.Color(78, 141, 167));
         jLabel4.setFont(new java.awt.Font("Tahoma", 3, 18)); // NOI18N
+        jLabel4.setForeground(new java.awt.Color(255, 255, 0));
         jLabel4.setText("ChatBox");
+
+        jButton1.setBackground(new java.awt.Color(45, 55, 216));
+        jButton1.setFont(new java.awt.Font("Tahoma", 3, 18)); // NOI18N
+        jButton1.setForeground(new java.awt.Color(255, 255, 51));
+        jButton1.setText("CLEAR");
+        jButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton1ActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
         jPanel3.setLayout(jPanel3Layout);
         jPanel3Layout.setHorizontalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createSequentialGroup()
+                .addContainerGap()
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 468, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 87, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 27, Short.MAX_VALUE)
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addGroup(jPanel3Layout.createSequentialGroup()
-                        .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 87, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(0, 0, Short.MAX_VALUE))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createSequentialGroup()
-                        .addGap(0, 0, Short.MAX_VALUE)
-                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 500, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 87, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 87, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 98, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 474, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap())
         );
         jPanel3Layout.setVerticalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel3Layout.createSequentialGroup()
-                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 46, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jLabel4, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 46, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 385, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 385, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                    .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 385, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
@@ -333,9 +361,9 @@ public class Launcher extends javax.swing.JFrame {
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(headerLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(jPanel4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 20, Short.MAX_VALUE)
-                .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 0, 0))
+                .addGap(18, 18, 18)
+                .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, 440, Short.MAX_VALUE)
+                .addContainerGap())
         );
 
         getContentPane().add(jPanel1, java.awt.BorderLayout.PAGE_START);
@@ -348,7 +376,7 @@ public class Launcher extends javax.swing.JFrame {
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 2, Short.MAX_VALUE)
+            .addGap(0, 0, Short.MAX_VALUE)
         );
 
         getContentPane().add(jPanel2, java.awt.BorderLayout.LINE_END);
@@ -370,20 +398,26 @@ public class Launcher extends javax.swing.JFrame {
                 System.out.println(file.getPath());
                 String fileName = file.getAbsolutePath();
                 System.out.println(fileName);
+                long timeDES=0;
                 String msgStr;
                 BufferedReader br=new BufferedReader(new InputStreamReader(new FileInputStream(fileName)));
-                chatBoxTextArea.append("file: "+fileName+" has been sent to another client at time "+new Date());
+               // chatBoxTextArea.append("file: "+fileName+" has been sent to another client at time "+new Date());
                 while((msgStr=br.readLine())!=null)
                 {
 
                     MessageEncryption messEncryption = new MessageEncryption(msgStr,DESKey,"DES");
                     String encryptedMsgStr = messEncryption.getMessageString();
                     Message encryptedMsg = new Message(encryptedMsgStr,"DES"); 
-                    chatBoxTextArea.append(msgStr+" \n");
+                    timeDES += takenTimeE;
+                    //chatBoxTextArea.append(msgStr+" \n");
                     fileoos.writeObject(encryptedMsg);
+                   
                     //Launcher.flag=1;
                
                 }
+                consoleTextArea.append("Encryption time File(DES): "+timeDES);
+               /// timeTakenFile = 12354+timeDES;
+                 chatBoxTextArea.append("   Me: "+ fileName+"has been sent\n");
             } catch (Exception ex) {
                 Logger.getLogger(Launcher.class.getName()).log(Level.SEVERE, null, ex);
             }    
@@ -406,7 +440,8 @@ public class Launcher extends javax.swing.JFrame {
         try {
             
             String msgStr = msgTextField.getText();
-            chatBoxTextArea.append("Me: "+msgStr+"\n");
+              msgTextField.setText("");
+            chatBoxTextArea.append("    Me: "+msgStr+"\n");
             MessageEncryption messEncryption = new MessageEncryption(msgStr,AESKey,"AES");
             String encryptedMsgStr = messEncryption.getMessageString();
             Message encryptedMsg = new Message(encryptedMsgStr,"AES");
@@ -426,7 +461,8 @@ public class Launcher extends javax.swing.JFrame {
     private void sendDESBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_sendDESBtnActionPerformed
         try {
             String msgStr = msgTextField.getText();
-            chatBoxTextArea.append("Me: "+msgStr+"\n");
+            msgTextField.setText("");
+            chatBoxTextArea.append("    Me: "+msgStr+"\n");
             MessageEncryption messEncryption = new MessageEncryption(msgStr,DESKey,"DES");
             String encryptedMsgStr = messEncryption.getMessageString();
             Message encryptedMsg = new Message(encryptedMsgStr,"DES");
@@ -443,12 +479,24 @@ public class Launcher extends javax.swing.JFrame {
     private void graphButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_graphButtonActionPerformed
        
             Frame f = new Frame();
-        f.setBounds(200,200,800,300);
+        f.setBounds(200,200,1000,800);
         f.add(new Graph());
         f.setResizable(false);
         f.setVisible(true);
+        Frame f1 = new Frame();
+        f1.setBounds(200,200,1000,800);
+        f1.add(new Des_Graph());
+        f1.setResizable(false);
+        f1.setVisible(true);
         
         
+        /*try {
+            sleep(5000);
+            f.dispose();
+        } catch (InterruptedException ex) {
+            Logger.getLogger(Launcher.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        */
     }//GEN-LAST:event_graphButtonActionPerformed
 
     private void sendFileAESBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_sendFileAESBtnActionPerformed
@@ -466,35 +514,27 @@ public class Launcher extends javax.swing.JFrame {
                 String fileName = file.getAbsolutePath();
                 System.out.println(fileName);
                 String msgStr;
+                long timeForFile=0;
                 BufferedReader br=new BufferedReader(new InputStreamReader(new FileInputStream(fileName)));
-                chatBoxTextArea.append("file: "+fileName+" has been sent to another client at time "+new Date());
+               // chatBoxTextArea.append("file: "+fileName+" has been sent to another client at time "+new Date());
                 while((msgStr=br.readLine())!=null)
                 {
 
                     MessageEncryption messEncryption = new MessageEncryption(msgStr,AESKey,"AES");
+                    timeForFile += takenTimeE;
                     String encryptedMsgStr = messEncryption.getMessageString();
                     Message encryptedMsg = new Message(encryptedMsgStr,"AES"); 
-                    chatBoxTextArea.append(msgStr+" \n");
+                 //   chatBoxTextArea.append(msgStr+" \n");
                     //Launcher.flag=1;
                     fileoos.writeObject(encryptedMsg);
+                     
                     
                   // oos.writeInt(1);
                    // System.out.println("int sent");
                 }
-               /* if(val!=0)
-                {
-                    File f = new File(fileName1);
-                    if(f.exists()){
-                            f.delete();
-                            try {
-                                    f.createNewFile();
-                                    
-                            } catch (IOException e) {
-                                    e.printStackTrace();
-                            }
-                    }
-                    val=0;
-                }*/
+                consoleTextArea.append("Encryption time File(AES): "+timeForFile);
+                chatBoxTextArea.append("   Me: "+ fileName+"has been sent\n");
+                //timeTakenFile = 12354+timeForFile;
             } catch (Exception ex) {
                 Logger.getLogger(Launcher.class.getName()).log(Level.SEVERE, null, ex);
             }    
@@ -508,12 +548,18 @@ public class Launcher extends javax.swing.JFrame {
         Launcher.flag=0;     
     }//GEN-LAST:event_sendFileAESBtnActionPerformed
 
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+        // TODO add your handling code here:
+        consoleTextArea.setText("");
+    }//GEN-LAST:event_jButton1ActionPerformed
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JTextArea chatBoxTextArea;
     private javax.swing.JTextArea consoleTextArea;
     private javax.swing.JButton graphButton;
     private javax.swing.JLabel headerLabel;
+    private javax.swing.JButton jButton1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel4;
