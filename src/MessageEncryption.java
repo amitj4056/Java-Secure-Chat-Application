@@ -35,8 +35,16 @@ public class MessageEncryption {
         System.out.println("It took " + duration + " nanosecond to encrypt the message \"" + message +"\" using "+type);
         Launcher.takenTimeE=duration;
         System.out.println("Message length is " + message.length());
-        Graph.length.add((double)message.length());
-        Graph.time.add((double)duration/100000);
+        if(type.equals("AES"))
+        {
+            Graph.length_Aes.add((double)message.length());
+            Graph.time_Aes.add((double)duration/100000);
+        }
+        else
+        {
+             Des_Graph.length_Des.add((double)message.length());
+            Des_Graph.time_Des.add((double)duration/100000);
+        }
     }
 
     public String getMessageString() {

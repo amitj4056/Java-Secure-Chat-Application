@@ -8,10 +8,10 @@ import java.util.logging.Logger;
 import javax.swing.*;
 import static javax.swing.JFrame.EXIT_ON_CLOSE;
 
-class Graph extends JPanel {
+class Des_Graph extends JPanel {
     
-    public static ArrayList<Double> length_Aes=new ArrayList<>();
-    public static ArrayList<Double> time_Aes=new ArrayList<>();
+    public static ArrayList<Double> length_Des=new ArrayList<>();
+    public static ArrayList<Double> time_Des=new ArrayList<>();
     
     
     final int PAD = 30;
@@ -49,32 +49,32 @@ class Graph extends JPanel {
         float sx = (w - sw)/2;
         g2.drawString(s, sx, sy);
         // Draw lines.
-        g2.setPaint(Color.green.darker());
+        g2.setPaint(Color.blue.darker());
         double x1,y1,x2=PAD,y2=h-PAD;
-        for(int i=0; i < time_Aes.size(); i++) {
+        for(int i=0; i < time_Des.size(); i++) {
             x1 = x2;
             y1 =y2;
-            x2 = length_Aes.get(i)+(i+1)*PAD;
-            y2 = h-(i+1)*PAD - time_Aes.get(i);
+            x2 = length_Des.get(i)+(i+1)*PAD;
+            y2 = h-(i+1)*PAD - time_Des.get(i);
             g2.draw(new Line2D.Double(x1, y1, x2+PAD, y2-PAD));
         }
         // Mark data points.
         g2.setPaint(Color.red);
-        for(int i = 0; i < time_Aes.size(); i++) {
-            double x =(i+1)*PAD+length_Aes.get(i);
-            double y =h-time_Aes.get(i)-(i+1)*PAD;
+        for(int i = 0; i < time_Des.size(); i++) {
+            double x =(i+1)*PAD+length_Des.get(i);
+            double y =h-time_Des.get(i)-(i+1)*PAD;
             y1=h-PAD;
             x1=PAD;
             //for x,y line coordinates
             g2.fill(new Ellipse2D.Double(x+PAD, y1, 4, 4));
             g2.fill(new Ellipse2D.Double(x1, y-PAD, 4, 4));
-            g2.drawString("("+Integer.toString((length_Aes.get(i)).intValue()),(int)x-15+PAD,(int)y1);
+            g2.drawString("("+Integer.toString((length_Des.get(i)).intValue()),(int)x-15+PAD,(int)y1);
             g2.drawString(",0)",(int)x+5+PAD,(int)y1);
             g2.drawString("(0",(int)x1-15,(int)y-PAD);
-            g2.drawString(","+Integer.toString((time_Aes.get(i)).intValue())+")",(int)x1+5,(int)y-PAD);
+            g2.drawString(","+Integer.toString((time_Des.get(i)).intValue())+")",(int)x1+5,(int)y-PAD);
             //for line coordinates
-            g2.drawString("("+Integer.toString((length_Aes.get(i)).intValue()),(int)x-15+PAD,(int)y-PAD);
-            g2.drawString(","+Integer.toString((time_Aes.get(i)).intValue())+")",(int)x+10+PAD,(int)y-PAD);
+            g2.drawString("("+Integer.toString((length_Des.get(i)).intValue()),(int)x-15+PAD,(int)y-PAD);
+            g2.drawString(","+Integer.toString((time_Des.get(i)).intValue())+")",(int)x+10+PAD,(int)y-PAD);
             g2.fill(new Ellipse2D.Double(x+PAD, y-PAD, 4, 4));
         }
     }
